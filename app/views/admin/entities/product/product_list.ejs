@@ -1,0 +1,187 @@
+<style>
+  .custom-table {
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+  
+  .custom-table thead th {
+    background-color: #0066cc; /* Change header background color */
+    color: #fff; /* Header text color */
+    text-align: center;
+  }
+  
+  .custom-table tbody tr:hover {
+    background-color: #e6f7ff; /* Row hover effect */
+  }
+  
+  .custom-table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px;
+  }
+  
+  /* Custom button styles */
+  .btn-custom-view {
+    background-color: #28a745; /* View button color */
+    color: #fff;
+  }
+  
+  .btn-custom-view:hover {
+    background-color: #218838;
+    color: #fff;
+  }
+  
+  .btn-custom-edit {
+    background-color: #ffc107; /* Edit button color */
+    color: #fff;
+  }
+  .btn-custom-delete {
+    background-color: #ff0f0f; /* Edit button color */
+    color: #fff;
+  }
+  
+  .btn-custom-edit:hover {
+    background-color: #e0a800;
+    color: #fff;
+  }
+  .btn-custom-delete:hover {
+    background-color: #ff5454;
+    color: #fff;
+  }
+  
+</style>
+<!-- Content for body -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<%- contentFor('content_header') %>
+<div class="row mb-2">
+    <div class="col-sm-6">
+      
+      <h1 class="m-0" style="display: inline-block;"><%= data.header %></h1> &nbsp;&nbsp;&nbsp;
+        <div class="" style="display: inline-block;">
+
+
+          <ol class="breadcrumb">
+            <% data.breadcrumbs.forEach((crumb) => { %>
+              <li class="breadcrumb-item <%= crumb.link === '#' ? 'active' : '' %>">
+                <% if (crumb.link !== '#') { %>
+                  <a href="<%= crumb.link %>">
+                    <% if (crumb.icon) { %>
+                      <i class="<%= crumb.icon %>"></i>  <!-- Render the icon -->
+                    <% } %>
+                    <%= crumb.text %>
+                  </a>
+                <% } else { %>
+                  <% if (crumb.icon) { %>
+                    <i class="<%= crumb.icon %>"></i>  <!-- Render the icon for active item -->
+                  <% } %>
+                  <%= crumb.text %>  <!-- Text for active breadcrumb -->
+                <% } %>
+              </li>
+            <% }); %>
+          </ol>
+      </div>
+    </div><!-- /.col -->
+    <div class="col-sm-6 text-right">
+      <a href="/admin/milestones/add_milestone"> <div class="btn btn-primary mr-2"><i class="bi bi-plus-lg"></i>Add</div></a>
+    </div><!-- /.col -->
+  </div><!-- /.row -->  
+
+
+  <%- contentFor('content') %>
+  
+  
+  <!-- Filters -->
+  <div class="row"> 
+    <div class="col-lg-3">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+            </div>
+            <input type="text" class="form-control" placeholder="Search ..">
+        </div>
+    </div> 
+    <div class="col-lg">
+        <div class="btn btn-primary mr-2"><i class="bi bi-funnel"></i>&nbsp;Filter</div>
+        <div class="btn btn-outline-danger mr-2"><i class="fa-solid fa-filter-circle-xmark"></i>&nbsp;Clear</div>
+    </div>
+
+
+  </div>
+
+  <!-- Scalers -->
+  <div class="row">  
+
+  </div>
+
+  <!-- Datatable -->
+  <div class="mil-data mt-3 mb-3 table-responsive">
+    <table class="table table-bordered table-hover table-sm custom-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Milestone</th>
+          <th>Due Date</th>
+          <th>Description</th>
+          <th class="d-noned-none d-sm-block">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% p_mil.forEach(milestone => { %>
+          <tr>
+            <td><%= milestone.id %></td>
+            <td><%= milestone.milestone %></td>
+            
+            <td><%= new Date(milestone.due_date).toLocaleDateString() %></td>
+
+            <td><%= milestone.description %></td>
+            <td class="d-none d-sm-block">
+              <!-- View button -->
+              <a href="/milestone/view/<%= milestone.id %>" class="btn btn-custom-view btn-sm" title="View">
+                <i class="bi bi-eye"></i>
+              </a>
+              <!-- Edit button -->
+              <a href="/milestone/edit/<%= milestone.id %>" class="btn btn-custom-edit btn-sm" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </a>
+              <a href="/milestone/delete/<%= milestone.id %>" class="btn btn-custom-delete btn-sm" title="Edit">
+                <i class="fa-solid fa-delete-left"></i>
+              </a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+   </div>
+
+  <!-- Paging -->
+   <div class="row">    
+        <div class="col-lg-6 ">
+        
+            <div class="btn-group">
+              <div class="btn btn-sm btn-primary" >Goto</div>
+               <% data.paging.buttons.forEach((btn) => { %>
+                <div class="btn btn-sm  <% if(btn.current) {%> btn-primary  <% } else { %> btn-default <% } %>  " <% if(!btn.page) {%> disabled  <% } %> ><%= btn.title %></div>
+                <% }); %> 
+              </div>
+
+            </div>
+            
+            <div class="col-lg-6 text-right pt-2 pt-lg-0">
+              
+              
+              Rows <%= data.paging.first_index %> - <%= data.paging.last_index %> of <%= data.paging.total_rows %> 
+              ( Page <%= data.paging.current_page %> of <%= data.paging.total_pages %> )
+              &nbsp;&nbsp;&nbsp;
+            <select class="form-control" style="width: 60px; display: inline-block; height: 30px;">
+              <option <% if(data.paging.page_size == 10){ %> selected <%} %> >10</option>
+              <option <% if(data.paging.page_size == 25){ %> selected <%} %> >25</option>
+              <option <% if(data.paging.page_size == 50){ %> selected <%} %> >50</option>
+              <option <% if(data.paging.page_size == 100){ %> selected <%} %> >100</option>
+          </select>
+    </div>
+
+   </div>
+  
+   

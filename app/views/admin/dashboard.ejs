@@ -1,0 +1,213 @@
+<style>
+  .card{
+    width: 300px;
+  }
+</style>
+
+<!-- Content for body -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<%- contentFor('content_header') %>
+<div class="row mb-2">
+    <div class="col-sm-6">
+      
+      <h1 class="m-0" style="display: inline-block;"><%= data.header %></h1> &nbsp;&nbsp;&nbsp;
+        <div class="" style="display: inline-block;">
+
+          <ol class="breadcrumb">
+            <% data.breadcrumbs.forEach((crumb) => { %>
+              <li class="breadcrumb-item <%= crumb.link === '#' ? 'active' : '' %>">
+                <% if (crumb.link !== '#') { %>
+                  <a href="<%= crumb.link %>">
+                    <% if (crumb.icon) { %>
+                      <i class="<%= crumb.icon %>"></i>  <!-- Render the icon -->
+                    <% } %>
+                    <%= crumb.text %>
+                  </a>
+                <% } else { %>
+                  <% if (crumb.icon) { %>
+                    <i class="<%= crumb.icon %>"></i>  <!-- Render the icon for active item -->
+                  <% } %>
+                  <%= crumb.text %>  <!-- Text for active breadcrumb -->
+                <% } %>
+              </li>
+            <% }); %>
+          </ol>
+      </div>
+    </div><!-- /.col -->
+    <div class="col-sm-6">
+      
+    </div><!-- /.col -->
+  </div><!-- /.row -->
+
+
+  <%- contentFor('content') %>
+  <!-- small boxes  -->
+  <div class="row">
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-info">
+        <div class="inner">
+          <h3>1</h3>
+
+          <p>Current Project</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-bag"></i>
+        </div>
+        <a href="/admin/" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>6</h3>
+
+          <p>Milestones</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+        <a href="/admin/milestones" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-6">
+      <!-- small box -->
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3>20</h3>
+
+          <p>Remaining Tasks</p>
+        </div>
+        <div class="icon">
+          <i class="ion ion-stats-bars"></i>
+        </div>
+        <a href="/admin/milestones/tasks" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+      </div>
+    </div>
+ 
+    <!-- ./col -->
+  </div>
+
+  <!-- calendar -->
+  <div class="card bg-primary mt-3">
+    <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
+      <h3 class="card-title text-white">
+        <i class="far fa-calendar-alt"></i>
+        Calendar
+      </h3>
+      <!-- tools card -->
+      <div class="card-tools">
+        <!-- button with a dropdown -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="dropdown-menu" role="menu">
+            <a href="#" class="dropdown-item">Add new event</a>
+            <a href="#" class="dropdown-item">Clear events</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">View calendar</a>
+          </div>
+        </div>
+        <button type="button" class="btn btn-light btn-sm" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+        </button>
+        <button type="button" class="btn btn-light btn-sm" data-card-widget="remove">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <!-- /. tools -->
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body pt-0" style="max-height: 400px; overflow-y: auto;">
+      <!--The calendar -->
+      <div id="calendar" class="calendar-container" style="width: 100%; font-size: 0.9rem;">
+        <div class="bootstrap-datetimepicker-widget usetwentyfour">
+          <ul class="list-unstyled">
+            <li class="show">
+              <div class="datepicker">
+                <div class="datepicker-days">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th class="prev" data-action="previous">
+                          <span class="fa fa-chevron-left text-primary" title="Previous Month"></span>
+                        </th>
+                        <th class="picker-switch" data-action="pickerSwitch" colspan="5" title="Select Month">
+                          December 2024
+                        </th>
+                        <th class="next" data-action="next">
+                          <span class="fa fa-chevron-right text-primary" title="Next Month"></span>
+                        </th>
+                      </tr>
+                      <tr>
+                        <th class="dow text-primary">Su</th>
+                        <th class="dow text-primary">Mo</th>
+                        <th class="dow text-primary">Tu</th>
+                        <th class="dow text-primary">We</th>
+                        <th class="dow text-primary">Th</th>
+                        <th class="dow text-primary">Fr</th>
+                        <th class="dow text-primary">Sa</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td data-action="selectDay" data-day="12/01/2024" class="day weekend">1</td>
+                        <td data-action="selectDay" data-day="12/02/2024" class="day">2</td>
+                        <td data-action="selectDay" data-day="12/03/2024" class="day">3</td>
+                        <td data-action="selectDay" data-day="12/04/2024" class="day">4</td>
+                        <td data-action="selectDay" data-day="12/05/2024" class="day">5</td>
+                        <td data-action="selectDay" data-day="12/06/2024" class="day">6</td>
+                        <td data-action="selectDay" data-day="12/07/2024" class="day weekend">7</td>
+                      </tr>
+                      <tr>
+                        <td data-action="selectDay" data-day="12/08/2024" class="day weekend">8</td>
+                        <td data-action="selectDay" data-day="12/09/2024" class="day">9</td>
+                        <td data-action="selectDay" data-day="12/10/2024" class="day">10</td>
+                        <td data-action="selectDay" data-day="12/11/2024" class="day">11</td>
+                        <td data-action="selectDay" data-day="12/12/2024" class="day">12</td>
+                        <td data-action="selectDay" data-day="12/13/2024" class="day">13</td>
+                        <td data-action="selectDay" data-day="12/14/2024" class="day weekend">14</td>
+                      </tr>
+                      <tr>
+                        <td data-action="selectDay" data-day="12/15/2024" class="day weekend">15</td>
+                        <td data-action="selectDay" data-day="12/16/2024" class="day">16</td>
+                        <td data-action="selectDay" data-day="12/17/2024" class="day">17</td>
+                        <td data-action="selectDay" data-day="12/18/2024" class="day">18</td>
+                        <td data-action="selectDay" data-day="12/19/2024" class="day">19</td>
+                        <td data-action="selectDay" data-day="12/20/2024" class="day">20</td>
+                        <td data-action="selectDay" data-day="12/21/2024" class="day weekend">21</td>
+                      </tr>
+                      <tr>
+                        <td data-action="selectDay" data-day="12/22/2024" class="day weekend">22</td>
+                        <td data-action="selectDay" data-day="12/23/2024" class="day">23</td>
+                        <td data-action="selectDay" data-day="12/24/2024" class="day">24</td>
+                        <td data-action="selectDay" data-day="12/25/2024" class="day active today">25</td>
+                        <td data-action="selectDay" data-day="12/26/2024" class="day">26</td>
+                        <td data-action="selectDay" data-day="12/27/2024" class="day">27</td>
+                        <td data-action="selectDay" data-day="12/28/2024" class="day weekend">28</td>
+                      </tr>
+                      <tr>
+                        <td data-action="selectDay" data-day="12/29/2024" class="day weekend">29</td>
+                        <td data-action="selectDay" data-day="12/30/2024" class="day">30</td>
+                        <td data-action="selectDay" data-day="12/31/2024" class="day">31</td>
+                        <td data-action="selectDay" data-day="01/01/2025" class="day new">1</td>
+                        <td data-action="selectDay" data-day="01/02/2025" class="day new">2</td>
+                        <td data-action="selectDay" data-day="01/03/2025" class="day new">3</td>
+                        <td data-action="selectDay" data-day="01/04/2025" class="day new weekend">4</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.card-body -->
+  </div>
