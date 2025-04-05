@@ -96,7 +96,8 @@ router.get('/tasks', mw_auth('web',''), async (req, res) =>{
   ret_obj.keyword = '';
   
   ret_obj.header = 'Tasks';
-  ret_obj.breadcrumbs = [{"text":"Tasks","link":"#","icon":"fa-solid fa-list-check"},{"text":"add_task","link":"","icon":"bi bi-plus-lg"},];
+  ret_obj.breadcrumbs = [{"text":"Tasks","link":"#","icon":"fa-solid fa-list-check"},
+    {"text":"Description","link":"/admin/milestones/task_view","icon":"bi bi-info-circle-fill"},];
   
 
   
@@ -135,46 +136,8 @@ router.get('/task_view', mw_auth('web',''), async (req, res) =>{
   ret_obj.keyword = '';
   
   ret_obj.header = 'Tasks';
-  ret_obj.breadcrumbs = [{"text":"Tasks","link":"#","icon":"fa-solid fa-list-check"},{"text":"add_task","link":"","icon":"bi bi-plus-lg"},];
-  
-
-  
-  //----------------------------------------------------------------------------------------------
-  
-  let base_query_p = 'select * from products'
-  let where_query_p = '';
-  let order_query_p = '';
-  let limit_query_p = '';
-let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,created_at,updated_at FROM tasks;')
-   
-let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
-
-  let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
-  ret_obj.paging = paging(total_rows[0].count, 10,5);
-  
-
-  // Get pagging obj
-  // let p_data = await h_mysql.execute('SELECT product_id, product_name, price, category FROM products',[]);
-  ret_obj.sample ='';
-  //res.send(JSON.stringify(req.auth));
-  // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
- 
-  res.render('admin/entities/product/task_view',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil});
-  
-})
-
-
-
-router.get('/coming', mw_auth('web',''), async (req, res) =>{
-  let ret_obj = {};
-  ret_obj.layout =  mo_layouts.main(req); //Layout Data
-  
-  ret_obj.title = 'Products List';
-  ret_obj.desc = '';
-  ret_obj.keyword = '';
-  
-  ret_obj.header = 'Tasks';
-  ret_obj.breadcrumbs = [{"text":"Tasks","link":"#","icon":"fa-solid fa-list-check"},{"text":"add_task","link":"","icon":"bi bi-plus-lg"},];
+ret_obj.breadcrumbs = [{"text":"Tasks","link":"/admin/milestones/tasks","icon":"fa-solid fa-list-check"},
+  {"text":"Description","link":"#","icon":"bi bi-info-circle-fill"},];
   
 
   
@@ -198,7 +161,48 @@ let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description F
   //res.send(JSON.stringify(req.auth));
   // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
  
-  res.render('admin/entities/product/coming',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil});
+  res.render('admin/entities/product/task_view',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil});
+  
+})
+
+
+
+router.get('/calender', mw_auth('web',''), async (req, res) =>{
+  let ret_obj = {};
+  ret_obj.layout =  mo_layouts.main(req); //Layout Data
+  
+  ret_obj.title = 'Products List';
+  ret_obj.desc = '';
+  ret_obj.keyword = '';
+  
+  ret_obj.header = 'Tasks';
+  ret_obj.breadcrumbs = [{"text":"ACAD_CAL","link":"#","icon":"fa-solid fa-list-check"},{"text":"Coming Event","link":"","icon":"bi bi-plus-lg"},];
+  
+
+  
+  //----------------------------------------------------------------------------------------------
+  
+  let base_query_p = 'select * from products'
+  let where_query_p = '';
+  let order_query_p = '';
+  let limit_query_p = '';
+let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,created_at,updated_at FROM tasks;')
+   
+let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
+
+let acad_cal = await h_mysql.execute('SELECT * FROM mern_base.acad_cal;')
+
+  let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
+  ret_obj.paging = paging(total_rows[0].count, 10,5);
+  
+
+  // Get pagging obj
+  let p_data = await h_mysql.execute('SELECT product_id, product_name, price, category FROM products',[]);
+  ret_obj.sample ='';
+  //res.send(JSON.stringify(req.auth));
+  // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
+ 
+  res.render('admin/entities/product/calender',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil,acad_cal});
   
 })
 

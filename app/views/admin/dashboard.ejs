@@ -91,123 +91,169 @@
  
     <!-- ./col -->
   </div>
+  <style>
+    .calendar {
+      max-width: 400px;
+      margin: 20px ;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      
+    }
 
+    .calendar-header {
+      background-color: #0d6efd;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calendar-subtitle {
+      text-align: center;
+      font-size: 1rem;
+      padding: 10px 0;
+      color: #333;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+    }
+
+    .calendar-grid div {
+      padding: 15px;
+      border: 1px solid #eee;
+    }
+
+    .calendar-day {
+      font-weight: bold;
+      background-color: #f0f0f0;
+    }
+
+    .calendar-date.today {
+      background-color: #ffc107;
+      color: #000;
+      font-weight: bold;
+      border-radius: 50%;
+    }
+
+    .calendar-date.other-month {
+      color: #bbb;
+    }
+
+    .calendar-body {
+      padding-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .calendar-grid div {
+        padding: 10px;
+      }
+    }
+  </style>
   <!-- calendar -->
-  <div class="card bg-primary mt-3">
-    <div class="card-header border-0 ui-sortable-handle" style="cursor: move;">
-      <h3 class="card-title text-white">
-        <i class="far fa-calendar-alt"></i>
-        Calendar
-      </h3>
-      <!-- tools card -->
-      <div class="card-tools">
-        <!-- button with a dropdown -->
-        <div class="btn-group">
-          <button type="button" class="btn btn-light btn-sm dropdown-toggle" data-toggle="dropdown" data-offset="-52">
-            <i class="fas fa-bars"></i>
-          </button>
-          <div class="dropdown-menu" role="menu">
-            <a href="#" class="dropdown-item">Add new event</a>
-            <a href="#" class="dropdown-item">Clear events</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">View calendar</a>
-          </div>
-        </div>
-        <button type="button" class="btn btn-light btn-sm" data-card-widget="collapse">
-          <i class="fas fa-minus"></i>
-        </button>
-        <button type="button" class="btn btn-light btn-sm" data-card-widget="remove">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <!-- /. tools -->
+  <div class="calendar">
+    <div class="calendar-header">
+      <button class="btn btn-light" onclick="prevMonth()">&laquo;</button>
+      <h4 id="calendar-title" class="mb-0"></h4>
+      <button class="btn btn-light" onclick="nextMonth()">&raquo;</button>
     </div>
-    <!-- /.card-header -->
-    <div class="card-body pt-0" style="max-height: 400px; overflow-y: auto;">
-      <!--The calendar -->
-      <div id="calendar" class="calendar-container" style="width: 100%; font-size: 0.9rem;">
-        <div class="bootstrap-datetimepicker-widget usetwentyfour">
-          <ul class="list-unstyled">
-            <li class="show">
-              <div class="datepicker">
-                <div class="datepicker-days">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th class="prev" data-action="previous">
-                          <span class="fa fa-chevron-left text-primary" title="Previous Month"></span>
-                        </th>
-                        <th class="picker-switch" data-action="pickerSwitch" colspan="5" title="Select Month">
-                          December 2024
-                        </th>
-                        <th class="next" data-action="next">
-                          <span class="fa fa-chevron-right text-primary" title="Next Month"></span>
-                        </th>
-                      </tr>
-                      <tr>
-                        <th class="dow text-primary">Su</th>
-                        <th class="dow text-primary">Mo</th>
-                        <th class="dow text-primary">Tu</th>
-                        <th class="dow text-primary">We</th>
-                        <th class="dow text-primary">Th</th>
-                        <th class="dow text-primary">Fr</th>
-                        <th class="dow text-primary">Sa</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td data-action="selectDay" data-day="12/01/2024" class="day weekend">1</td>
-                        <td data-action="selectDay" data-day="12/02/2024" class="day">2</td>
-                        <td data-action="selectDay" data-day="12/03/2024" class="day">3</td>
-                        <td data-action="selectDay" data-day="12/04/2024" class="day">4</td>
-                        <td data-action="selectDay" data-day="12/05/2024" class="day">5</td>
-                        <td data-action="selectDay" data-day="12/06/2024" class="day">6</td>
-                        <td data-action="selectDay" data-day="12/07/2024" class="day weekend">7</td>
-                      </tr>
-                      <tr>
-                        <td data-action="selectDay" data-day="12/08/2024" class="day weekend">8</td>
-                        <td data-action="selectDay" data-day="12/09/2024" class="day">9</td>
-                        <td data-action="selectDay" data-day="12/10/2024" class="day">10</td>
-                        <td data-action="selectDay" data-day="12/11/2024" class="day">11</td>
-                        <td data-action="selectDay" data-day="12/12/2024" class="day">12</td>
-                        <td data-action="selectDay" data-day="12/13/2024" class="day">13</td>
-                        <td data-action="selectDay" data-day="12/14/2024" class="day weekend">14</td>
-                      </tr>
-                      <tr>
-                        <td data-action="selectDay" data-day="12/15/2024" class="day weekend">15</td>
-                        <td data-action="selectDay" data-day="12/16/2024" class="day">16</td>
-                        <td data-action="selectDay" data-day="12/17/2024" class="day">17</td>
-                        <td data-action="selectDay" data-day="12/18/2024" class="day">18</td>
-                        <td data-action="selectDay" data-day="12/19/2024" class="day">19</td>
-                        <td data-action="selectDay" data-day="12/20/2024" class="day">20</td>
-                        <td data-action="selectDay" data-day="12/21/2024" class="day weekend">21</td>
-                      </tr>
-                      <tr>
-                        <td data-action="selectDay" data-day="12/22/2024" class="day weekend">22</td>
-                        <td data-action="selectDay" data-day="12/23/2024" class="day">23</td>
-                        <td data-action="selectDay" data-day="12/24/2024" class="day">24</td>
-                        <td data-action="selectDay" data-day="12/25/2024" class="day active today">25</td>
-                        <td data-action="selectDay" data-day="12/26/2024" class="day">26</td>
-                        <td data-action="selectDay" data-day="12/27/2024" class="day">27</td>
-                        <td data-action="selectDay" data-day="12/28/2024" class="day weekend">28</td>
-                      </tr>
-                      <tr>
-                        <td data-action="selectDay" data-day="12/29/2024" class="day weekend">29</td>
-                        <td data-action="selectDay" data-day="12/30/2024" class="day">30</td>
-                        <td data-action="selectDay" data-day="12/31/2024" class="day">31</td>
-                        <td data-action="selectDay" data-day="01/01/2025" class="day new">1</td>
-                        <td data-action="selectDay" data-day="01/02/2025" class="day new">2</td>
-                        <td data-action="selectDay" data-day="01/03/2025" class="day new">3</td>
-                        <td data-action="selectDay" data-day="01/04/2025" class="day new weekend">4</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
+    <div class="calendar-subtitle" id="live-time"></div>
+    <div class="calendar-body">
+      <div class="calendar-grid calendar-days">
+        <div class="calendar-day">Sun</div>
+        <div class="calendar-day">Mon</div>
+        <div class="calendar-day">Tue</div>
+        <div class="calendar-day">Wed</div>
+        <div class="calendar-day">Thu</div>
+        <div class="calendar-day">Fri</div>
+        <div class="calendar-day">Sat</div>
       </div>
+      <div class="calendar-grid" id="calendar-dates"></div>
     </div>
-    <!-- /.card-body -->
   </div>
+  
+  <script>
+    let currentDate = new Date();
+  
+    function renderCalendar() {
+      const month = currentDate.getMonth();
+      const year = currentDate.getFullYear();
+  
+      const title = document.getElementById("calendar-title");
+      const datesContainer = document.getElementById("calendar-dates");
+      const monthNames = ["January", "February", "March", "April", "May", "June",
+                          "July", "August", "September", "October", "November", "December"];
+  
+      title.textContent = `${monthNames[month]} ${year}`;
+      datesContainer.innerHTML = "";
+  
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const startDay = firstDayOfMonth.getDay();
+      const daysInMonth = lastDayOfMonth.getDate();
+  
+      // Previous month's days
+      const prevMonthDays = new Date(year, month, 0).getDate();
+      for (let i = startDay - 1; i >= 0; i--) {
+        const day = prevMonthDays - i;
+        const div = document.createElement("div");
+        div.textContent = day;
+        div.classList.add("calendar-date", "other-month");
+        datesContainer.appendChild(div);
+      }
+  
+      // Current month days
+      const today = new Date();
+      for (let i = 1; i <= daysInMonth; i++) {
+        const div = document.createElement("div");
+        div.textContent = i;
+        div.classList.add("calendar-date");
+        if (
+          i === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
+        ) {
+          div.classList.add("today");
+        }
+        datesContainer.appendChild(div);
+      }
+  
+      // Next month's trailing days
+      const totalCells = startDay + daysInMonth;
+      const nextDays = 42 - totalCells;
+      for (let i = 1; i <= nextDays; i++) {
+        const div = document.createElement("div");
+        div.textContent = i;
+        div.classList.add("calendar-date", "other-month");
+        datesContainer.appendChild(div);
+      }
+    }
+  
+    function prevMonth() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    }
+  
+    function nextMonth() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    }
+  
+    function updateLiveTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const datePart = now.toLocaleDateString(undefined, options);
+      const timePart = now.toLocaleTimeString();
+      document.getElementById("live-time").textContent = `${datePart} | ${timePart}`;
+    }
+  
+    // Initialize calendar and start time
+    renderCalendar();
+    updateLiveTime();
+    setInterval(updateLiveTime, 1000);
+  </script>

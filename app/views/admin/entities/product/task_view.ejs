@@ -1,3 +1,5 @@
+
+
 <%- contentFor('content_header') %>
 <div class="row mb-2">
     <div class="col-sm-6">
@@ -33,3 +35,112 @@
 
 
 <%- contentFor('content') %> 
+<div class="mil-data mt-3 mb-3">
+  <div class="row">
+    <% p_mil.forEach(milestone => { %>
+      <div class="col-md-4 col-lg-3 mb-4">
+        <div class="card shadow border-light">
+          <img src="path/to/image.jpg" class="card-img-top" alt=""> <!-- Add an image -->
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+              <%= milestone.milestone %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <p><strong><i class="fas fa-calendar-alt"></i> Due Date:</strong> <%= new Date(milestone.due_date).toLocaleDateString() %></p>
+            <p><strong>Description:</strong> <%= milestone.description %></p>
+            <p><b><i class="fas fa-tasks"></i> Tasks</b></p>
+            <ol>
+              <% tasks.forEach(task => { %>
+                <% if (task.milestone_id == milestone.id) { %>
+                  <li><%= task.task_name %></li>
+                <% } %>
+              <% }); %>
+            </ol>
+          </div>
+          <div class="card-footer text-right bg-light">
+            <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#taskModal<%= milestone.id %>">
+              View Details
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal for this specific milestone (Bootstrap 4) -->
+      <div class="modal fade" id="taskModal<%= milestone.id %>" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel<%= milestone.id %>" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" id="taskModalLabel<%= milestone.id %>"><%= milestone.milestone %> Tasks</h5>
+              <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="milestone-header mb-4">
+                <h4><%= milestone.milestone %></h4>
+                <p class="text-muted"><i class="fas fa-calendar-alt"></i> Due: <%= new Date(milestone.due_date).toLocaleDateString() %></p>
+                <p><%= milestone.description %></p>
+              </div>
+              <div class="task-list">
+                <h5><i class="fas fa-tasks"></i> Tasks</h5>
+                <% 
+                const milestoneTasks = tasks.filter(task => task.milestone_id == milestone.id);
+                if (milestoneTasks.length > 0) { 
+                %>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Task Name</th>
+                          <th>Status</th>
+                          <th>Assigned&nbsp;To</th>
+                          <th>Due&nbsp;Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% milestoneTasks.forEach(task => { %>
+                          <tr>
+                            <td><%= task.task_name %></td>
+                            <td>
+                              <% let badgeClass = 'secondary'; %>
+                              <% if(task.status) { %>
+                                <% 
+                                  if(task.status.toLowerCase() === 'completed') badgeClass = 'success';
+                                  else if(task.status.toLowerCase() === 'in progress') badgeClass = 'primary';
+                                  else if(task.status.toLowerCase() === 'pending') badgeClass = 'warning';
+                                  else if(task.status.toLowerCase() === 'overdue') badgeClass = 'danger';
+                                %>
+                                <span class="badge badge-<%= badgeClass %>"><%= task.status %></span>
+                              <% } else { %>
+                                <span class="badge badge-secondary">Not Set</span>
+                              <% } %>
+                            </td>
+                            <td><%= task.assigned_to || 'Unassigned' %></td>
+                            <td><%= task.due_date ? new Date(task.due_date).toLocaleDateString() : 'Not set' %></td>
+                          </tr>
+                          <tr>
+                            <td colspan="4" class="task-description">
+                              <small><%= task.description || 'No description available' %></small>
+                            </td>
+                          </tr>
+                        <% }); %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% } else { %>
+                  <p>No tasks found for this milestone.</p>
+                <% } %>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+
