@@ -22,7 +22,7 @@ const { date } = require('joi');
 
 
 
-
+// dashboard
 router.get('/', mw_auth('web',''), async (req, res) => {
   let ret_obj = {};
   ret_obj.layout = mo_layouts.main(req); // Layout Data
@@ -47,7 +47,8 @@ router.get('/', mw_auth('web',''), async (req, res) => {
   
   // let p_data = await h_mysql.execute('SELECT product_id, product_name, price, category FROM products', []);
   let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones', []);
-  
+
+
   res.render('admin/entities/product/product_list', { layout: 'admin/layouts/main_layout', data: ret_obj, p_mil });
 });
 router.get('/add_milestone', mw_auth('web',''), async (req, res) => {
@@ -70,23 +71,62 @@ router.get('/add_milestone', mw_auth('web',''), async (req, res) => {
   res.render('admin/entities/product/add_milestone', { layout: 'admin/layouts/main_layout', data: ret_obj });
 });
 
-router.post('/add_milestone', mw_auth('web',''), async (req, res) => {
-  const { milestone, due_date, description } = req.body;
+router.post('/add_milestone', mw_auth('web', ''), async (req, res) => {
+  const { milestone, due_date, description, tasks, assigned_to } = req.body;
+
+  if (!milestone || milestone.trim() === '') {
+    return res.status(400).send('Milestone is required');
+  }
 
   const insert_obj = {
-      milestone,
-      due_date,
-      description
+    milestone: milestone.trim(),
+    due_date: due_date || null,
+    description: description || null
   };
 
   try {
-      await h_mysql.insert('milestones', insert_obj);
-      res.redirect('/admin/milestones/');
+    // Insert milestone
+    const result = await h_mysql.insert('milestones', insert_obj);
+    const milestoneId = result.insertId;
+
+    // Insert tasks with assigned_to
+    if (Array.isArray(tasks)) {
+      for (let i = 0; i < tasks.length; i++) {
+        const taskName = tasks[i]?.trim();
+        const assignedTo = Array.isArray(assigned_to) ? assigned_to[i]?.trim() : assigned_to?.trim();
+
+        if (taskName) {
+          const taskObj = {
+            milestone_id: milestoneId,
+            task_name: taskName,
+            assigned_to: assignedTo || null,
+            status: 'pending',
+            created_at: new Date(),
+            updated_at: new Date()
+          };
+          await h_mysql.insert('tasks', taskObj);
+        }
+      }
+    } else if (typeof tasks === 'string' && tasks.trim() !== '') {
+      // Handle single task (non-array case)
+      const taskObj = {
+        milestone_id: milestoneId,
+        task_name: tasks.trim(),
+        assigned_to: typeof assigned_to === 'string' ? assigned_to.trim() : null,
+        status: 'pending',
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+      await h_mysql.insert('tasks', taskObj);
+    }
+
+    res.redirect('/admin/milestones/');
   } catch (error) {
-      console.error('Error inserting milestone:', error);
-      res.status(500).send('Error inserting milestone');
+    console.error('Error inserting milestone:', error);
+    res.status(500).send('Error inserting milestone');
   }
 });
+
 router.get('/tasks', mw_auth('web',''), async (req, res) =>{
   let ret_obj = {};
   ret_obj.layout =  mo_layouts.main(req); //Layout Data
@@ -126,44 +166,65 @@ let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description F
 })
 
 
+// task view route 
+router.get('/task_view', mw_auth('web', ''), async (req, res) => {
+  try {
+    // 1. Layout and Page Meta Setup
+    const ret_obj = {
+      layout: mo_layouts.main(req),
+      title: 'Products List',
+      desc: '',
+      keyword: '',
+      header: 'Tasks',
+      breadcrumbs: [
+        { text: "Tasks", link: "/admin/milestones/tasks", icon: "fa-solid fa-list-check" },
+        { text: "Description", link: "#", icon: "bi bi-info-circle-fill" }
+      ]
+    };
 
-router.get('/task_view', mw_auth('web',''), async (req, res) =>{
-  let ret_obj = {};
-  ret_obj.layout =  mo_layouts.main(req); //Layout Data
-  
-  ret_obj.title = 'Products List';
-  ret_obj.desc = '';
-  ret_obj.keyword = '';
-  
-  ret_obj.header = 'Tasks';
-ret_obj.breadcrumbs = [{"text":"Tasks","link":"/admin/milestones/tasks","icon":"fa-solid fa-list-check"},
-  {"text":"Description","link":"#","icon":"bi bi-info-circle-fill"},];
-  
+    // 2. Fetch Tasks and Milestones from DB
+let p_tasks = await h_mysql.execute(`
+  SELECT 
+    t.id, t.milestone_id, t.task_name, t.status, t.assigned_to, t.created_at, t.updated_at,
+    m.due_date AS milestone_due_date, m.milestone, m.description AS milestone_description
+  FROM tasks t
+  LEFT JOIN milestones m ON t.milestone_id = m.id;
+`);
 
-  
-  //----------------------------------------------------------------------------------------------
-  
-  let base_query_p = 'select * from products'
-  let where_query_p = '';
-  let order_query_p = '';
-  let limit_query_p = '';
-let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,created_at,updated_at FROM tasks;')
-   
-let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
 
-  let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
-  ret_obj.paging = paging(total_rows[0].count, 10,5);
-  
 
-  // Get pagging obj
-  let p_data = await h_mysql.execute('SELECT product_id, product_name, price, category FROM products',[]);
-  ret_obj.sample ='';
-  //res.send(JSON.stringify(req.auth));
-  // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
- 
-  res.render('admin/entities/product/task_view',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil});
-  
-})
+
+
+    const p_mil = await h_mysql.execute(`
+      SELECT id, milestone, due_date, description 
+      FROM milestones;
+    `);
+
+    // 3. Product Data Fetch (If required in the same view)
+    const total_rows = await h_mysql.execute(`SELECT COUNT(*) as count FROM products`);
+    ret_obj.paging = paging(total_rows[0].count, 10, 5);
+
+    const p_data = await h_mysql.execute(`
+      SELECT product_id, product_name, price, category 
+      FROM products
+      LIMIT 10
+    `);
+
+    // 4. Render EJS Template with Data
+    res.render('admin/entities/product/task_view', {
+      layout: 'admin/layouts/main_layout',
+      data: ret_obj,
+      products: p_data,
+      tasks: p_tasks,
+      p_mil: p_mil
+    });
+
+  } catch (error) {
+    console.error('Error in /task_view:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 
 
@@ -203,6 +264,46 @@ let acad_cal = await h_mysql.execute('SELECT * FROM mern_base.acad_cal;')
   // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
  
   res.render('admin/entities/product/calender',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil,acad_cal});
+  
+})
+
+// teams Route
+router.get('/teams', mw_auth('web',''), async (req, res) =>{
+  let ret_obj = {};
+  ret_obj.layout =  mo_layouts.main(req); //Layout Data
+  
+  ret_obj.title = 'Products List';
+  ret_obj.desc = '';
+  ret_obj.keyword = '';
+  
+  ret_obj.header = 'Tasks';
+  ret_obj.breadcrumbs = [{"text":"ACAD_CAL","link":"#","icon":"fa-solid fa-list-check"},{"text":"Coming Event","link":"","icon":"bi bi-plus-lg"},];
+  
+
+  
+  //----------------------------------------------------------------------------------------------
+  
+  let base_query_p = 'select * from products'
+  let where_query_p = '';
+  let order_query_p = '';
+  let limit_query_p = '';
+let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,created_at,updated_at FROM tasks;')
+   
+let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
+
+let acad_cal = await h_mysql.execute('SELECT * FROM mern_base.acad_cal;')
+
+  let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
+  ret_obj.paging = paging(total_rows[0].count, 10,5);
+  
+
+  // Get pagging obj
+  let p_data = await h_mysql.execute('SELECT product_id, product_name, price, category FROM products',[]);
+  ret_obj.sample ='';
+  //res.send(JSON.stringify(req.auth));
+  // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );
+ 
+  res.render('admin/entities/product/teams',{ layout: 'admin/layouts/main_layout',data:ret_obj, products: p_data,tasks:p_tasks,p_mil,acad_cal});
   
 })
 
@@ -316,5 +417,22 @@ router.post('/api/insert', mw_auth('web',''), (req, res) =>
       res.send('/admin/products/edit/:id   Product Edit:' + req.params.id );
     })
 
+
+router.get('/milestone/delete/:id', mw_auth('web',''), async (req, res) => {
+  const milestoneId = req.params.id;
+
+  try {
+    // Delete tasks related to the milestone
+    await h_mysql.execute('DELETE FROM tasks WHERE milestone_id = ?', [milestoneId]);
+
+    // Delete the milestone
+    await h_mysql.execute('DELETE FROM milestones WHERE id = ?', [milestoneId]);
+
+    res.redirect('/admin/milestones/');
+  } catch (error) {
+    console.error('Error deleting milestone and tasks:', error);
+    res.status(500).send('Error deleting milestone and tasks');
+  }
+});
 
 module.exports = router;

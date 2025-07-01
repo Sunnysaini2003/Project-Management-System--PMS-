@@ -7,10 +7,10 @@ function obj()
         { "type":"item", "icon":"nav-icon bi bi-speedometer2", "text":"Dashboard", "badge":"", "data":"/admin","link":"" },
         // { "type":"item", "icon":"nav-icon fa-regular fa-file", "text":"Projects", "badge":"", "data":"/admin/project","link":"" },
         
-        { "type":"item", "icon":"nav-icon bi bi-geo", "text":"Milestone", "badge":"", "data":"/admin/milestones" },
+        { "type":"item", "icon":"nav-icon bi bi-geo", "text":"Milestones", "badge":"", "data":"/admin/milestones" },
         { "type":"item", "icon":"nav-icon fa-solid fa-list-check", "text":"Tasks", "badge":"<label clss='danger'></label>", "data":"/admin/milestones/tasks" },
         { "type":"item", "icon":"nav-icon fa-regular fa-calendar", "text":"Calender", "badge":"", "data":"/admin/milestones/calender" },
-        { "type":"item", "icon":"nav-icon bi bi-cup-hot", "text":"Teams", "badge":"<label clss='danger'></label>", "data":"/admin/milestones/coming" },
+        { "type":"item", "icon":"nav-icon bi bi-cup-hot", "text":"Teams", "badge":"<label clss='danger'></label>", "data":"/admin/milestones/teams" },
         
         // { "type":"dropdown", "icon":"nav-icon fas fa-th", "text":"Sub-Tasks", "badge":"<label clss='danger'></label>", "data": [
         //         { "type":"section", "icon":"nav-icon fas fa-thnav-icon fas fa-th", "text":"Tasks", "badge":"", "data":"" },

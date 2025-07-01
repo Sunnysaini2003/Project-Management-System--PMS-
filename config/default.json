@@ -5,7 +5,7 @@
   
   "pro_logo":"MernBase",
   "pro_icon":"MernBase",
-  "pro_title":"PMS",
+  "pro_title":"WorkSync",
 
     "con_mysql": {
       "database": "mern_base",
@@ -30,3 +30,4 @@
     "allowedloginattempts": 5,
     "locking_period": "hours +2"
 }
+

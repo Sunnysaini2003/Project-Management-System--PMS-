@@ -1,0 +1,89 @@
+<%- contentFor('content_header') %>
+  <%- contentFor('content') %> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WorkSync Team Members</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+    }
+    .chat-box {
+      height: 300px;
+      overflow-y: auto;
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .chat-message {
+      margin-bottom: 10px;
+    }
+    .chat-message.me {
+      text-align: right;
+    }
+    .chat-message span {
+      display: inline-block;
+      padding: 6px 12px;
+      background: #e1f0ff;
+      border-radius: 15px;
+    }
+    .chat-message.me span {
+      background: #cce5ff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">WorkSync Team Members</h2>
+  <div class="row">
+
+    <!-- Member Card -->
+    <div class="col-md-4 col-sm-6 mb-4">
+      <div class="card shadow h-100">
+        <img src="https://via.placeholder.com/400x200" class="card-img-top" alt="Sunny">
+        <div class="card-body">
+          <h5 class="card-title mb-0">Sunny Saini</h5>
+          <p class="text-muted">Team Member</p>
+          <p><i class="bi bi-envelope"></i> sunny@example.com</p>
+          <p><i class="bi bi-clipboard"></i> FullStack Developer</p>
+          <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#chatAjay">💬 Chat</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatAjay" tabindex="-1" aria-labelledby="chatAjayLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="chatAjayLabel">Chat with Sunny</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="chat-box">
+              <div class="chat-message"><span>Hello Sunny!</span></div>
+              <div class="chat-message me"><span>Hi! What's the update on Project?</span></div>
+              <div class="chat-message"><span>Working on the task API. Will update in an hour.</span></div>
+            </div>
+            <input type="text" class="form-control" placeholder="Type a message..." disabled>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Repeat the above card & modal for more members -->
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

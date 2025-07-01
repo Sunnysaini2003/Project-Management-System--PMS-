@@ -32,6 +32,16 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
     
   })
   
+  router.get('/signup', (req, res) =>
+    {
+      let ret_obj = {};
+      ret_obj.title = 'Login | ' + config.get('project');
+      
+      
+      res.render('admin/auth/signup',{ layout:'admin/layouts/blank_layout',data:ret_obj });
+      
+    })
+
   router.get('/logout',mw_auth('web',''), async (req, res) =>
     {
     token_validity = h_datetime.add(new Date(),'days -365'); //For DB
@@ -165,4 +175,76 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
       return  'Incorrect Password, Failed Attempts '+ (user.pass_attempts + 1) +' out of '+config.get('allowedloginattempts');
 
     }
+router.post('/api/signup', async (req, res) => {
+  let ret_obj = {};
+  ret_obj.success = false;
+  ret_obj.status = '';
+
+  // Validate & Sanitize input
+  // Remove confirmPassword from validation schema as it is not stored in DB
+  const input_schema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    project_name: Joi.string().required(),
+    project_domain: Joi.string().required(),
+    mentor_name: Joi.string().required(),
+    department: Joi.string().required()
+  }).options({ abortEarly: false });
+
+  // Remove confirmPassword from req.body before validation
+  const { confirmPassword, ...bodyToValidate } = req.body;
+
+  const input_validation = input_schema.validate(bodyToValidate);
+  if (input_validation.error) {
+    ret_obj.status = 'validation_error';
+    ret_obj.error = input_validation.error;
+    return res.status(200).send(ret_obj);
+  }
+
+  try {
+    // Check if user already exists
+    let existingUsers = await h_mysql.execute('SELECT * FROM users WHERE email = ?', [req.body.email]);
+    if (existingUsers.length > 0) {
+      ret_obj.status = 'error';
+      ret_obj.message = 'Email already registered';
+      return res.status(200).send(ret_obj);
+    }
+
+    // Generate salt and hash password
+    const salt = h_string.random();
+    const pass_hash = sha1(salt + req.body.password);
+
+    // Prepare insert object
+    const insert_obj = {
+      email: req.body.email,
+      pass_hash: pass_hash,
+      salt: salt,
+      // project_name: req.body.project_name,
+      // project_domain: req.body.project_domain,
+      // mentor_name: req.body.mentor_name,
+      // department: req.body.department,
+      is_active: 1,
+      // created_at: h_datetime.getUTC()
+    };
+
+    // Insert user record
+    let insertResult = await h_mysql.insert('users', insert_obj);
+
+    if (insertResult.affectedRows === 1) {
+      ret_obj.success = true;
+      ret_obj.status = 'registered';
+      return res.status(200).send(ret_obj);
+    } else {
+      ret_obj.status = 'error';
+      ret_obj.message = 'Failed to register user';
+      return res.status(200).send(ret_obj);
+    }
+  } catch (error) {
+    console.error('Signup API error:', error);
+    ret_obj.status = 'error';
+    ret_obj.message = error.message || error.stack || 'Server error';
+    return res.status(500).send(ret_obj);
+  }
+});
+
 module.exports = router;

@@ -240,9 +240,16 @@ textarea {
                 <i class="fa-solid fa-list-check text-primary me-2"></i> Assign Tasks
               </label>
               <div id="tasks-container">
-                <div class="task-input-group d-flex mb-2">
-                  <input type="text" name="tasks[]" class="form-control border-primary rounded-pill p-3" placeholder="Enter task" required>
-                  <button type="button" class="btn btn-danger ms-2 remove-task d-none"><i class="bi bi-trash"></i></button>
+                <div class="task-input-group row align-items-center mb-2">
+                  <div class="col-6">
+                    <input type="text" name="tasks[]" class="form-control border-primary rounded-pill p-3" placeholder="Enter task" required>
+                  </div>
+                  <div class="col-5">
+                    <input type="text" name="assigned_to[]" class="form-control border-success rounded-pill p-3" placeholder="Assign to (name or team)" required>
+                  </div>
+                  <div class="col-1 text-end">
+                    <button type="button" class="btn btn-danger remove-task d-none"><i class="bi bi-trash"></i></button>
+                  </div>
                 </div>
               </div>
               <button type="button" class="btn btn-success mt-2 px-3 py-2" id="add-task">
@@ -291,6 +298,33 @@ textarea {
   </div> 
 </div>
 
+<!-- JS Script for Dynamic Tasks -->
+<script>
+document.getElementById('add-task').addEventListener('click', function () {
+  const taskGroup = document.createElement('div');
+  taskGroup.className = 'task-input-group row align-items-center mb-2';
+  taskGroup.innerHTML = `
+    <div class="col-6">
+      <input type="text" name="tasks[]" class="form-control border-primary rounded-pill p-3" placeholder="Enter task" required>
+    </div>
+    <div class="col-5">
+      <input type="text" name="assigned_to[]" class="form-control border-success rounded-pill p-3" placeholder="Assign to (name or team)" required>
+    </div>
+    <div class="col-1 text-end">  
+      <button type="button" class="btn btn-danger remove-task"><i class="bi bi-trash"></i></button>
+    </div>
+  `;
+  document.getElementById('tasks-container').appendChild(taskGroup);
+});
+
+// Handle removal of tasks
+document.getElementById('tasks-container').addEventListener('click', function (e) {
+  if (e.target.closest('.remove-task')) {
+    e.target.closest('.task-input-group').remove();
+  }
+});
+</script>
+  
 <script>
   document.addEventListener("DOMContentLoaded", function() {
       const taskContainer = document.getElementById("tasks-container");

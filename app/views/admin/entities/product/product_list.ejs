@@ -48,10 +48,11 @@
     background-color: #ff5454;
     color: #fff;
   }
-  
+
 </style>
 <!-- Content for body -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
 <%- contentFor('content_header') %>
 <div class="row mb-2">
     <div class="col-sm-6">
@@ -114,44 +115,44 @@
   </div>
 
   <!-- Datatable -->
-  <div class="mil-data mt-3 mb-3 table-responsive">
-    <table class="table table-bordered table-hover table-sm custom-table">
-      <thead>
+<div class="mil-data mt-3 mb-3 table-responsive">
+  <table class="table table-bordered table-hover table-sm custom-table">
+    <thead>
+      <tr>
+        <th>#</th> <!-- Changed header text to indicate serial number -->
+        <th>Milestone</th>
+        <th>Due Date</th>
+        <th>Description</th>
+        <th class="d-none d-sm-block">Actions</th> <!-- Fixed class typo: d-noned-none -> d-none -->
+      </tr>
+    </thead>
+    <tbody>
+      <% p_mil.forEach((milestone, index) => { %>
         <tr>
-          <th>ID</th>
-          <th>Milestone</th>
-          <th>Due Date</th>
-          <th>Description</th>
-          <th class="d-noned-none d-sm-block">Actions</th>
+          <td><%= index + 1 %></td> <!-- Sequential number -->
+          <td><%= milestone.milestone %></td>
+          <td><%= new Date(milestone.due_date).toLocaleDateString() %></td>
+          <td><%= milestone.description %></td>
+          <td class="d-none d-sm-block">
+            <!-- View button -->
+            <a href="milestones/task_view" class="btn btn-custom-view btn-sm" title="View">
+              <i class="bi bi-eye"></i>
+            </a>
+            <!-- Edit button -->
+            <a href="/milestone/edit/<%= milestone.id %>" class="btn btn-custom-edit btn-sm" title="Edit">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <!-- Delete button -->
+            <a href="/admin/milestones/milestone/delete/<%= milestone.id %>" class="btn btn-custom-delete btn-sm" title="Delete">
+              <i class="fa-solid fa-delete-left"></i>
+            </a>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <% p_mil.forEach(milestone => { %>
-          <tr>
-            <td><%= milestone.id %></td>
-            <td><%= milestone.milestone %></td>
-            
-            <td><%= new Date(milestone.due_date).toLocaleDateString() %></td>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
 
-            <td><%= milestone.description %></td>
-            <td class="d-none d-sm-block">
-              <!-- View button -->
-              <a href="milestones/task_view" class="btn btn-custom-view btn-sm" title="View">
-                <i class="bi bi-eye"></i>
-              </a>
-              <!-- Edit button -->
-              <a href="/milestone/edit/<%= milestone.id %>" class="btn btn-custom-edit btn-sm" title="Edit">
-                <i class="bi bi-pencil"></i>
-              </a>
-              <a href="/milestone/delete/<%= milestone.id %>" class="btn btn-custom-delete btn-sm" title="Edit">
-                <i class="fa-solid fa-delete-left"></i>
-              </a>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
 
    </div>
 
