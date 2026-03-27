@@ -175,7 +175,9 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
       return  'Incorrect Password, Failed Attempts '+ (user.pass_attempts + 1) +' out of '+config.get('allowedloginattempts');
 
     }
-router.post('/api/signup', async (req, res) => {
+
+//Signup route for making new user  
+router.post('/signup', async (req, res) => {
   let ret_obj = {};
   ret_obj.success = false;
   ret_obj.status = '';
@@ -207,7 +209,7 @@ router.post('/api/signup', async (req, res) => {
     if (existingUsers.length > 0) {
       ret_obj.status = 'error';
       ret_obj.message = 'Email already registered';
-      return res.status(200).send(ret_obj);
+      return res.status(400).send(ret_obj);
     }
 
     // Generate salt and hash password
@@ -229,7 +231,6 @@ router.post('/api/signup', async (req, res) => {
 
     // Insert user record
     let insertResult = await h_mysql.insert('users', insert_obj);
-
     if (insertResult.affectedRows === 1) {
       ret_obj.success = true;
       ret_obj.status = 'registered';
@@ -245,6 +246,7 @@ router.post('/api/signup', async (req, res) => {
     ret_obj.message = error.message || error.stack || 'Server error';
     return res.status(500).send(ret_obj);
   }
+  //res.redirect('admin/auth/login');
 });
 
 module.exports = router;

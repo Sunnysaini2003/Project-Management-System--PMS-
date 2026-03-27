@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 require('module-alias/register');//Needed for @ in path
 var cookieParser = require('cookie-parser')

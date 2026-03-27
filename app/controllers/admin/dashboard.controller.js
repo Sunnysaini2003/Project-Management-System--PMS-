@@ -33,10 +33,6 @@ router.get('/',mw_auth('web','test:test1'), (req, res) =>
     
   ];
   
-  
-  
-  
-  
   // ret_obj.sample = "Hello i am sample";
   //res.send(JSON.stringify(req.auth));
   // res.send('Dashboard ' + JSON.stringify(req.auth.status)  );

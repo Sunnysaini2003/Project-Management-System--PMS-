@@ -22,8 +22,8 @@ const { date } = require('joi');
 
 
 
-// dashboard
-router.get('/', mw_auth('web',''), async (req, res) => {
+// Milestones Page
+    router.get('/', mw_auth('web',''), async (req, res) => {
   let ret_obj = {};
   ret_obj.layout = mo_layouts.main(req); // Layout Data
   
@@ -51,6 +51,8 @@ router.get('/', mw_auth('web',''), async (req, res) => {
 
   res.render('admin/entities/product/product_list', { layout: 'admin/layouts/main_layout', data: ret_obj, p_mil });
 });
+
+//add_milestones
 router.get('/add_milestone', mw_auth('web',''), async (req, res) => {
   let ret_obj = {};
   ret_obj.layout = mo_layouts.main(req); // Layout Data
@@ -58,6 +60,7 @@ router.get('/add_milestone', mw_auth('web',''), async (req, res) => {
   ret_obj.title = 'Add Milestone';
   ret_obj.desc = '';
   ret_obj.keyword = '';
+  ret_obj.p_title = '';
   
   ret_obj.header = 'Milestones';
   ret_obj.breadcrumbs = [
@@ -231,14 +234,19 @@ let p_tasks = await h_mysql.execute(`
 router.get('/calender', mw_auth('web',''), async (req, res) =>{
   let ret_obj = {};
   ret_obj.layout =  mo_layouts.main(req); //Layout Data
-  
+
   ret_obj.title = 'Products List';
   ret_obj.desc = '';
   ret_obj.keyword = '';
+
   
   ret_obj.header = 'Tasks';
   ret_obj.breadcrumbs = [{"text":"ACAD_CAL","link":"#","icon":"fa-solid fa-list-check"},{"text":"Coming Event","link":"","icon":"bi bi-plus-lg"},];
   
+  
+
+  
+
 
   
   //----------------------------------------------------------------------------------------------
@@ -378,10 +386,11 @@ function paging(total_rows, page_size = 10, current_page = 1, paging_btn_count =
 
 
 // Read / View Web Route
-router.get('/:id', mw_auth('web',''), (req, res) =>
-{
-  res.send('/admin/products/:id    Product View:' + req.params.id );
-})
+router.get('/:id', mw_auth('web', ''), (req, res) => {
+  const productId = req.params.id;
+  res.send(`Product View: ${productId}`);
+});
+
 
 // Add / Insert Web Route
 router.get('/add', mw_auth('web',''), (req, res) =>
@@ -394,6 +403,9 @@ router.get('/edit/:id', mw_auth('web',''), (req, res) =>
 {
   res.send('/admin/products/edit/:id   Product Edit:' + req.params.id );
 })
+
+
+
 
 
 
