@@ -13,7 +13,7 @@
     "config": "^3.3.11",
     "cookie-parser": "^1.4.7",
     "debug": "^4.3.5",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
@@ -23,7 +23,7 @@
     "middleware-async": "^1.4.0",
     "module-alias": "^2.2.3",
     "mysql2": "^3.11.4",
-    "nodemon": "^3.1.9",
+    "nodemon": "^3.1.14",
     "sha1": "^1.1.1",
     "winston": "^3.13.0"
   },

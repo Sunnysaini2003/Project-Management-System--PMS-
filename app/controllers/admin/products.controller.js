@@ -259,7 +259,7 @@ let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,cre
    
 let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
 
-let acad_cal = await h_mysql.execute('SELECT * FROM mern_base.acad_cal;')
+let acad_cal = await h_mysql.execute('SELECT * FROM pms.acad_cal;')
 
   let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
   ret_obj.paging = paging(total_rows[0].count, 10,5);
@@ -299,7 +299,7 @@ let p_tasks = await h_mysql.execute('SELECT id,milestone_id,task_name,status,cre
    
 let p_mil = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones',[]);
 
-let acad_cal = await h_mysql.execute('SELECT * FROM mern_base.acad_cal;')
+let acad_cal = await h_mysql.execute('SELECT * FROM pms.acad_cal;')
 
   let total_rows = await h_mysql.execute('select count(*) as count from ('+ base_query_p +') tb '+ where_query_p);
   ret_obj.paging = paging(total_rows[0].count, 10,5);
