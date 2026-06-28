@@ -1,148 +1,92 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <style>
-
-  /* Ensure container is centered */
-.container {
-  max-width: 700px;
-  margin: auto;
-}
-
-/* Form fields */
-.form-control {
+#milestone-form .form-control {
   font-size: 1rem;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  border-radius: 1.5rem;
   border: 2px solid #007bff;
   width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Buttons */
-.btn {
-  font-size: 1rem;
-  padding: 10px 15px;
+#milestone-form .form-control:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 91, 187, 0.25);
 }
 
-/* Task Input Group */
-.task-input-group {
+#milestone-form .task-input-group {
+  margin-bottom: 0.75rem;
+}
+
+#milestone-form .task-input-group .col-md-6,
+#milestone-form .task-input-group .col-md-5 {
+  padding-right: 0.75rem;
+}
+
+#milestone-form .task-input-group .col-md-1 {
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding-left: 0;
 }
 
-.task-input-group .remove-task {
-  margin-left: 10px;
+#milestone-form .remove-task {
+  min-width: 42px;
+  border-radius: 50px;
 }
 
-#add-task {
-  background-color: #28a745;
-  color: white;
-  border-radius: 30px;
-}
-
-  /* General Styling */
-body {
-  background-color: #f8f9fa; /* Light background */
-}
-
-/* Centering the card */
-.card {
-  border-radius: 12px;
+#milestone-form .card {
+  border-radius: 1rem;
   overflow: hidden;
 }
 
-/* Card Header */
-.card-header {
-  font-size: 1.25rem;
-  font-weight: bold;
+#milestone-form .card-header {
+  font-size: 1.15rem;
+  font-weight: 700;
   background: linear-gradient(135deg, #007bff, #0056b3);
   color: white;
   text-transform: uppercase;
 }
 
-/* Form Input Fields */
-.form-control {
-  font-size: 1rem;
-  padding: 10px 15px;
-  border-radius: 50px; /* Rounded inputs */
-  border: 2px solid #007bff;
-  transition: 0.3s;
+#milestone-form .btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  border-radius: 50px;
+  font-size: 1.05rem;
 }
 
-.form-control:focus {
-  border-color: #0056b3;
-  box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
-}
-
-/* Task Input Fields */
-.task-input-group {
-  position: relative;
-}
-
-.task-input-group input {
-  flex: 1;
-}
-
-/* Buttons */
-.btn {
-  font-size: 1rem;
-  padding: 10px 15px;
-  transition: all 0.3s ease;
-}
-
-/* Add Task Button */
-#add-task {
+#milestone-form #add-task {
   background-color: #28a745;
   color: white;
   border-radius: 50px;
 }
 
-#add-task:hover {
+#milestone-form #add-task:hover {
   background-color: #218838;
 }
 
-/* Remove Task Button */
-.remove-task {
-  border-radius: 50px;
-  padding: 10px 12px;
-}
-
-/* Submit Button */
-.btn-primary {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border: none;
-  border-radius: 50px;
-  font-size: 1.1rem;
-}
-/* Fix for Date Input */
-#due_date {
-  width: 100%; /* Ensure full width */
-  height: 45px; /* Set height for consistency */
+#milestone-form #due_date {
+  width: 100%;
+  height: 45px;
   padding: 10px 15px;
   border: 2px solid #007bff;
-  border-radius: 25px; /* Adjust for smooth pill shape */
+  border-radius: 25px;
   font-size: 1rem;
-  appearance: none; /* Removes default styling */
-  position: relative;
+  appearance: none;
 }
 
-/* Ensure the calendar icon aligns properly */
-#due_date::-webkit-calendar-picker-indicator {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
+#milestone-form textarea {
+  border-radius: 1rem;
+}
+
+#milestone-form #due_date::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.8;
   font-size: 1.2rem;
 }
 
-
-.btn-primary:hover {
+#milestone-form .btn-primary:hover {
   background: linear-gradient(135deg, #0056b3, #003580);
-}
-
-/* Description Textarea */
-textarea {
-  border-radius: 12px;
 }
 
 </style>
@@ -210,20 +154,20 @@ textarea {
 </div> -->
 
 <!-- Milestone Form  -->
-<div class="container mt-4">
+<div id="milestone-form" class="container mt-4">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
       <div class="card shadow border-0">
         <div class="card-header bg-primary text-white text-center py-3">
-          <h5 class="mb-0">Add New Milestone</h5>
+          <h5 class="mb-0"><%= data.edit ? 'Edit Milestone' : 'Add New Milestone' %></h5>
         </div>
         <div class="card-body p-4">
-          <form action="/admin/milestones/add_milestone" method="POST">
+          <form action="<%= data.edit ? '/admin/milestones/update/' + data.milestone.id : '/admin/milestones/add_milestone' %>" method="POST">
             
             <!-- Milestone Input -->
             <div class="form-group mb-4">
-              <label for="milestone" class="form-label fw-bold">
-                <i class="bi bi-geo text-primary me-2"></i> Milestone
+              <label for="milestone" class="font-weight-bold">
+                <i class="bi bi-geo text-primary mr-2"></i> Milestone
               </label>
               <input 
                 type="text" 
@@ -231,26 +175,43 @@ textarea {
                 name="milestone" 
                 class="form-control border-primary rounded-pill p-3" 
                 placeholder="Enter milestone" 
+                value="<%= data.milestone ? data.milestone.milestone : '' %>"
                 required>
             </div>
 
             <!-- Dynamic Task Input Section -->
             <div class="form-group mb-4">
-              <label class="form-label fw-bold">
-                <i class="fa-solid fa-list-check text-primary me-2"></i> Assign Tasks
+              <label class="font-weight-bold">
+                <i class="fas fa-list-check text-primary mr-2"></i> Assign Tasks
               </label>
               <div id="tasks-container">
-                <div class="task-input-group row align-items-center mb-2">
-                  <div class="col-6">
-                    <input type="text" name="tasks[]" class="form-control border-primary rounded-pill p-3" placeholder="Enter task" required>
+                <% if (data.tasks && data.tasks.length > 0) { %>
+                  <% data.tasks.forEach((task, taskIndex) => { %>
+                    <div class="task-input-group row align-items-center no-gutters mb-2">
+                      <div class="col-12 col-md-6">
+                        <input type="text" name="tasks[]" class="form-control border-primary" placeholder="Enter task" value="<%= task.task_name %>" required>
+                      </div>
+                      <div class="col-12 col-md-5">
+                        <input type="text" name="assigned_to[]" class="form-control border-success" placeholder="Assign to (name or team)" value="<%= task.assigned_to || '' %>" required>
+                      </div>
+                      <div class="col-12 col-md-1 text-right">
+                        <button type="button" class="btn btn-danger btn-sm remove-task <%= taskIndex === 0 ? 'd-none' : '' %>"><i class="bi bi-trash"></i></button>
+                      </div>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="task-input-group row align-items-center no-gutters mb-2">
+                    <div class="col-12 col-md-6">
+                      <input type="text" name="tasks[]" class="form-control border-primary" placeholder="Enter task" required>
+                    </div>
+                    <div class="col-12 col-md-5">
+                      <input type="text" name="assigned_to[]" class="form-control border-success" placeholder="Assign to (name or team)" required>
+                    </div>
+                    <div class="col-12 col-md-1 text-right">
+                      <button type="button" class="btn btn-danger btn-sm remove-task d-none"><i class="bi bi-trash"></i></button>
+                    </div>
                   </div>
-                  <div class="col-5">
-                    <input type="text" name="assigned_to[]" class="form-control border-success rounded-pill p-3" placeholder="Assign to (name or team)" required>
-                  </div>
-                  <div class="col-1 text-end">
-                    <button type="button" class="btn btn-danger remove-task d-none"><i class="bi bi-trash"></i></button>
-                  </div>
-                </div>
+                <% } %>
               </div>
               <button type="button" class="btn btn-success mt-2 px-3 py-2" id="add-task">
                 <i class="bi bi-plus-circle"></i> Add Task
@@ -267,6 +228,7 @@ textarea {
                 id="due_date"
                 name="due_date" 
                 class="form-control"
+                value="<%= data.milestone && data.milestone.due_date ? (new Date(data.milestone.due_date)).toISOString().slice(0, 10) : '' %>"
                 required>
             </div>
             
@@ -281,7 +243,7 @@ textarea {
                 class="form-control border-primary rounded p-3" 
                 placeholder="Enter milestone description" 
                 rows="4" 
-                required></textarea>
+                required><%= data.milestone ? data.milestone.description : '' %></textarea>
             </div>
 
             <!-- Submit Button -->
@@ -298,70 +260,46 @@ textarea {
   </div> 
 </div>
 
-<!-- JS Script for Dynamic Tasks -->
-<script>
-document.getElementById('add-task').addEventListener('click', function () {
-  const taskGroup = document.createElement('div');
-  taskGroup.className = 'task-input-group row align-items-center mb-2';
-  taskGroup.innerHTML = `
-    <div class="col-6">
-      <input type="text" name="tasks[]" class="form-control border-primary rounded-pill p-3" placeholder="Enter task" required>
-    </div>
-    <div class="col-5">
-      <input type="text" name="assigned_to[]" class="form-control border-success rounded-pill p-3" placeholder="Assign to (name or team)" required>
-    </div>
-    <div class="col-1 text-end">  
-      <button type="button" class="btn btn-danger remove-task"><i class="bi bi-trash"></i></button>
-    </div>
-  `;
-  document.getElementById('tasks-container').appendChild(taskGroup);
-});
-
-// Handle removal of tasks
-document.getElementById('tasks-container').addEventListener('click', function (e) {
-  if (e.target.closest('.remove-task')) {
-    e.target.closest('.task-input-group').remove();
-  }
-});
-</script>
-  
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-      const taskContainer = document.getElementById("tasks-container");
-      const addTaskBtn = document.getElementById("add-task");
-  
-      addTaskBtn.addEventListener("click", function() {
-          const taskGroup = document.createElement("div");
-          taskGroup.classList.add("task-input-group", "d-flex", "mb-2");
-  
-          const taskInput = document.createElement("input");
-          taskInput.type = "text";
-          taskInput.name = "tasks[]";
-          taskInput.classList.add("form-control", "form-control-lg", "border-primary", "rounded-pill");
-          taskInput.placeholder = "Enter task";
-          taskInput.required = true;
-  
-          const removeBtn = document.createElement("button");
-          removeBtn.type = "button";
-          removeBtn.classList.add("btn", "btn-danger", "ms-2", "remove-task");
-          removeBtn.innerHTML = '<i class="bi bi-trash"></i>';
-  
-          removeBtn.addEventListener("click", function() {
-              taskGroup.remove();
-          });
-  
-          taskGroup.appendChild(taskInput);
-          taskGroup.appendChild(removeBtn);
-          taskContainer.appendChild(taskGroup);
-  
-          // Ensure remove buttons are visible for all except first task
-          document.querySelectorAll(".remove-task").forEach(btn => btn.classList.remove("d-none"));
-      });
-  
-      // Show remove button if more than one task exists
-      if (taskContainer.children.length > 1) {
-          document.querySelectorAll(".remove-task").forEach(btn => btn.classList.remove("d-none"));
+    const taskContainer = document.getElementById("tasks-container");
+    const addTaskBtn = document.getElementById("add-task");
+
+    addTaskBtn.addEventListener("click", function() {
+      const taskGroup = document.createElement("div");
+      taskGroup.classList.add("task-input-group", "row", "align-items-center", "no-gutters", "mb-2");
+
+      taskGroup.innerHTML = `
+        <div class="col-12 col-md-6">
+          <input type="text" name="tasks[]" class="form-control border-primary" placeholder="Enter task" required>
+        </div>
+        <div class="col-12 col-md-5">
+          <input type="text" name="assigned_to[]" class="form-control border-success" placeholder="Assign to (name or team)" required>
+        </div>
+        <div class="col-12 col-md-1 text-right">
+          <button type="button" class="btn btn-danger btn-sm remove-task"><i class="bi bi-trash"></i></button>
+        </div>
+      `;
+
+      taskContainer.appendChild(taskGroup);
+      updateRemoveButtons();
+    });
+
+    taskContainer.addEventListener("click", function (e) {
+      if (e.target.closest('.remove-task')) {
+        e.target.closest('.task-input-group').remove();
+        updateRemoveButtons();
       }
+    });
+
+    function updateRemoveButtons() {
+      const removeButtons = taskContainer.querySelectorAll('.remove-task');
+      removeButtons.forEach((btn, index) => {
+        btn.classList.toggle('d-none', removeButtons.length === 1);
+      });
+    }
+
+    updateRemoveButtons();
   });
-  </script>
+</script>
 

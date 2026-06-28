@@ -35,3 +35,16 @@ app.listen(port, () => {
   debugStartUp(`Node app Started`);
   console.log(`Node app listening on port ${port}`);
 })
+
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.originalUrl}`);
+
+    const originalSend = res.send;
+
+    res.send = function (body) {
+        console.log("Response sent for:", req.originalUrl);
+        return originalSend.call(this, body);
+    };
+
+    next();
+});

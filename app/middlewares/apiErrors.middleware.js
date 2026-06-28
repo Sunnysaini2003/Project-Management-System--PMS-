@@ -1,6 +1,10 @@
-module.exports = function(err,req,res,next)
-{
+module.exports = (err, req, res, next) => {
 
-    //Log Error Here
-    res.status(500).send('Somthing Failed');
-}
+    console.error(err);
+
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    return res.status(500).send("Something Failed");
+};

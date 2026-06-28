@@ -64,8 +64,8 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
        
        //Validate & Santize
        const input_schema = Joi.object({
-         user: Joi.string().alphanum().min(3).max(30).required(),
-         pass: Joi.string().alphanum().min(3).max(30).required(),
+         user: Joi.string().trim().min(3).max(255).required(),
+         pass: Joi.string().trim().min(3).max(100).required(),
          remme: Joi.required(),
         }).options({abortEarly : false});
         
@@ -75,7 +75,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
             //Return Validation Error
             ret_obj.status = 'validation_error';
             ret_obj.error = input_validation.error;
-            res.status(200).send( ret_obj);
+            return res.status(200).send( ret_obj);
             
           }
          
@@ -86,7 +86,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
             {
               ret_obj.status = 'error';
               ret_obj.message = 'User not Found!';
-              res.status(200).send( ret_obj);
+              return res.status(200).send( ret_obj);
             }
 
             //Check for disabled user
@@ -95,31 +95,31 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
               {
                 ret_obj.status = 'error';
                 ret_obj.message = 'User is Disabled by Admin!';
-                res.status(200).send( ret_obj);
+                return res.status(200).send( ret_obj);
               }
 
-              //Check for Locked user
-              user.locked_untill = user.locked_untill ? user.locked_untill : h_datetime.add(new Date(),'minutes -1'); 
-              if( h_datetime.get(user.locked_untill) > h_datetime.get(new Date()) )
-                {
-                  ret_obj.status = 'error';
-                  ret_obj.message = 'User is Locked untill <br>'+user.locked_untill;
-                  res.status(200).send( ret_obj);
-                }
+            //Check for locked user
+            user.locked_untill = user.locked_untill ? user.locked_untill : h_datetime.add(new Date(),'minutes -1'); 
+            if( h_datetime.get(user.locked_untill) > h_datetime.get(new Date()) )
+              {
+                ret_obj.status = 'error';
+                ret_obj.message = 'User is Locked untill <br>'+user.locked_untill;
+                return res.status(200).send( ret_obj);
+              }
 
-              //Check for user password
-              temp_saltedhash = sha1(user.salt + req.body.pass);
-              if(temp_saltedhash.trim() != user.pass_hash.trim())
-              {
-                  ret_obj.status = 'error';
-                  ret_obj.message = await log_failed_attempts(user);
-                  res.status(200).send( ret_obj );
-              }
-              else
-              {
-                //Resetting pass attempts to zero
-                let users = await h_mysql.execute('update users set pass_attempts = 0 where id =?',[user.id]);
-              }
+            //Check for user password
+            temp_saltedhash = sha1(user.salt + req.body.pass);
+            if(temp_saltedhash.trim() != user.pass_hash.trim())
+            {
+                ret_obj.status = 'error';
+                ret_obj.message = await log_failed_attempts(user);
+                return res.status(200).send( ret_obj );
+            }
+            else
+            {
+              //Resetting pass attempts to zero
+              let users = await h_mysql.execute('update users set pass_attempts = 0 where id =?',[user.id]);
+            }
 
 
             //Genrate Token
@@ -149,7 +149,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
 
           h_log.log(user,'loggedin',{});
           ret_obj.success = true;
-          res.status(200).send( ret_obj );
+          return res.status(200).send( ret_obj );
       
     })
 
@@ -177,7 +177,7 @@ router.get('/login',mw_auth('auth',''), (req, res) =>
     }
 
 //Signup route for making new user  
-router.post('/signup', async (req, res) => {
+async function handleSignup(req, res) {
   let ret_obj = {};
   ret_obj.success = false;
   ret_obj.status = '';
@@ -186,6 +186,7 @@ router.post('/signup', async (req, res) => {
   // Remove confirmPassword from validation schema as it is not stored in DB
   const input_schema = Joi.object({
     email: Joi.string().email().required(),
+    mobile: Joi.string().pattern(/^[0-9]{10,15}$/).required(),
     password: Joi.string().min(6).required(),
     project_name: Joi.string().required(),
     project_domain: Joi.string().required(),
@@ -219,6 +220,8 @@ router.post('/signup', async (req, res) => {
     // Prepare insert object
     const insert_obj = {
       email: req.body.email,
+      mobile: req.body.mobile,
+      usertype_id: 2,
       pass_hash: pass_hash,
       salt: salt,
       // project_name: req.body.project_name,
@@ -226,7 +229,7 @@ router.post('/signup', async (req, res) => {
       // mentor_name: req.body.mentor_name,
       // department: req.body.department,
       is_active: 1,
-      // created_at: h_datetime.getUTC()
+      created_at: h_datetime.getUTC()
     };
 
     // Insert user record
@@ -247,6 +250,9 @@ router.post('/signup', async (req, res) => {
     return res.status(500).send(ret_obj);
   }
   //res.redirect('admin/auth/login');
-});
+}
+
+router.post('/api/signup', handleSignup);
+router.post('/signup', handleSignup);
 
 module.exports = router;

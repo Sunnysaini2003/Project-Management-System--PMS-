@@ -385,24 +385,91 @@ function paging(total_rows, page_size = 10, current_page = 1, paging_btn_count =
 }
 
 
-// Read / View Web Route
-router.get('/:id', mw_auth('web', ''), (req, res) => {
-  const productId = req.params.id;
-  res.send(`Product View: ${productId}`);
-});
-
-
 // Add / Insert Web Route
 router.get('/add', mw_auth('web',''), (req, res) =>
 {
   res.send('/admin/products/add/:id    Product Add' );
 })
 
-// Edit / Update Web Route
-router.get('/edit/:id', mw_auth('web',''), (req, res) =>
-{
-  res.send('/admin/products/edit/:id   Product Edit:' + req.params.id );
-})
+// Edit milestone route
+router.get('/edit/:id', mw_auth('web',''), async (req, res) => {
+  const milestoneId = req.params.id;
+  let ret_obj = {};
+  ret_obj.layout = mo_layouts.main(req);
+  ret_obj.title = 'Edit Milestone';
+  ret_obj.desc = '';
+  ret_obj.keyword = '';
+  ret_obj.header = 'Edit Milestone';
+  ret_obj.breadcrumbs = [
+    { text: "Milestones", link: "/admin/milestones/", icon: "bi bi-geo" },
+    { text: "Edit Milestone", link: "#", icon: "bi bi-pencil" }
+  ];
+
+  try {
+    const milestoneRows = await h_mysql.execute('SELECT id, milestone, due_date, description FROM milestones WHERE id = ?', [milestoneId]);
+    if (milestoneRows.length === 0) {
+      return res.redirect('/admin/milestones/');
+    }
+
+    const milestoneData = milestoneRows[0];
+    const taskRows = await h_mysql.execute('SELECT id, task_name, assigned_to FROM tasks WHERE milestone_id = ?', [milestoneId]);
+
+    ret_obj.edit = true;
+    ret_obj.milestone = milestoneData;
+    ret_obj.tasks = taskRows;
+
+    res.render('admin/entities/product/add_milestone', { layout: 'admin/layouts/main_layout', data: ret_obj });
+  } catch (error) {
+    console.error('Error loading edit milestone:', error);
+    res.status(500).send('Failed to load milestone for editing');
+  }
+});
+
+router.post('/update/:id', mw_auth('web', ''), async (req, res) => {
+  const milestoneId = req.params.id;
+  const { milestone, due_date, description, tasks, assigned_to } = req.body;
+
+  if (!milestone || milestone.trim() === '') {
+    return res.status(400).send('Milestone is required');
+  }
+
+  try {
+    await h_mysql.execute('UPDATE milestones SET milestone = ?, due_date = ?, description = ? WHERE id = ?', [milestone.trim(), due_date || null, description || null, milestoneId]);
+
+    await h_mysql.execute('DELETE FROM tasks WHERE milestone_id = ?', [milestoneId]);
+
+    if (Array.isArray(tasks)) {
+      for (let i = 0; i < tasks.length; i++) {
+        const taskName = tasks[i]?.trim();
+        const assignedToValue = Array.isArray(assigned_to) ? assigned_to[i]?.trim() : assigned_to?.trim();
+        if (taskName) {
+          await h_mysql.insert('tasks', {
+            milestone_id: milestoneId,
+            task_name: taskName,
+            assigned_to: assignedToValue || null,
+            status: 'pending',
+            created_at: new Date(),
+            updated_at: new Date()
+          });
+        }
+      }
+    } else if (typeof tasks === 'string' && tasks.trim() !== '') {
+      await h_mysql.insert('tasks', {
+        milestone_id: milestoneId,
+        task_name: tasks.trim(),
+        assigned_to: typeof assigned_to === 'string' ? assigned_to.trim() : null,
+        status: 'pending',
+        created_at: new Date(),
+        updated_at: new Date()
+      });
+    }
+
+    res.redirect('/admin/milestones/');
+  } catch (error) {
+    console.error('Error updating milestone:', error);
+    res.status(500).send('Error updating milestone');
+  }
+});
 
 
 
