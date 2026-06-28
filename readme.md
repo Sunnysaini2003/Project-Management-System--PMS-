@@ -22,3 +22,10 @@ Node.js, Express, Ejs, MySQL Workbench.
 3) Use nodemon index.js to start the project 
 4) If this is not working then use npm install dotenv and then start the project.
 
+## ⚙️ SETUP
+
+### Frontend
+```bash
+npm install
+nodmon index.js
+```
